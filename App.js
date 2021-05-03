@@ -1,16 +1,42 @@
 import * as React from "react";
-import * as Font from "expo-font";
+// for navigation
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import { AppLoading } from "expo-app-loading";
+import { useFonts } from "expo-font";
 import * as SecureStore from "expo-secure-store";
-import { View, Text } from "react-native";
+import { View, Text, Image } from "react-native";
 import Logo from "./src/component/Logo";
-import { Provider as PaperProvider, Button } from "react-native-paper";
+import {
+  DefaultTheme,
+  Provider as PaperProvider,
+  configureFonts,
+  Button,
+  BottomNavigation,
+} from "react-native-paper";
 import authApi from "./src/api/authApi";
-import Login from "./src/view/Login/Login";
+import Login from "./src/view/Login";
+import Splash from "./src/view/SplashView/Splash";
+import PostDetail from "./src/view/PostDetail";
+import Profile from "./src/view/Profile";
+import Register from "./src/view/Register";
+import { colors } from "./src/asset/color";
+import { Ionicons } from "@expo/vector-icons";
 
 import { AuthContext } from "./src/authContext";
+import fontConfig from "./src/config/font";
+
+const theme = {
+  ...DefaultTheme,
+
+  fonts: fontConfig.android,
+};
 
 export default function App() {
   // state for sign-in/register/sign-out
+
   const [state, dispatch] = React.useReducer(
     (prevState, action) => {
       switch (action.type) {
@@ -80,7 +106,10 @@ export default function App() {
             console.log(err);
           });
       },
-      signOut: () => dispatch({ type: "SIGN_OUT" }),
+      signOut: () => {
+        SecureStore.deleteItemAsync("userToken");
+        dispatch({ type: "SIGN_OUT" });
+      },
       signUp: async (data) => {
         // In a production app, we need to send user data to server and get a token
         // We will also need to handle errors if sign up failed
@@ -101,17 +130,129 @@ export default function App() {
     []
   );
 
+  const [loaded] = useFonts({
+    MontserratLight: require("./src/asset/fonts/Montserrat-Light.ttf"),
+    MontserratRegular: require("./src/asset/fonts/Montserrat-Regular.ttf"),
+    MontserratMedium: require("./src/asset/fonts/Montserrat-Medium.ttf"),
+    MontserratSemiBold: require("./src/asset/fonts/Montserrat-SemiBold.ttf"),
+    MontserratBold: require("./src/asset/fonts/Montserrat-Bold.ttf"),
+    MontserratBlack: require("./src/asset/fonts/Montserrat-Black.ttf"),
+    Montserrat: require("./src/asset/fonts/Montserrat-Medium.ttf"),
+  });
+
+  if (!loaded) {
+    return <Text>hello</Text>;
+  }
+
+  if (state.isLoading) {
+    // We haven't finished checking for the token yet
+    return <Splash />;
+  }
+
+  const Stack = createStackNavigator();
+  const Tab = createBottomTabNavigator();
+  const Drawer = createDrawerNavigator();
+
   return (
     <AuthContext.Provider value={authContext}>
-      <PaperProvider>
+      <PaperProvider theme={theme}>
         {state.userToken === null ? (
-          <Login />
+          <NavigationContainer>
+            <Stack.Navigator>
+              <Stack.Screen name="Login" component={Login} />
+              <Stack.Screen name="Register" component={Register} />
+            </Stack.Navigator>
+          </NavigationContainer>
         ) : (
-          <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          >
-            <Button onPress={() => authContext.signOut()}>Sign out</Button>
-          </View>
+          <NavigationContainer>
+            <Tab.Navigator
+              screenOptions={({ route }) => ({
+                tabBarIcon: ({ focused, color, size }) => {
+                  let iconName;
+
+                  switch (route.name) {
+                    case "Job": {
+                      iconName = focused
+                        ? require("./src/asset/job-focused.png")
+                        : require("./src/asset/job-not-focused.png");
+                      break;
+                    }
+                    case "Chat": {
+                      iconName = focused
+                        ? require("./src/asset/chat-focused.png")
+                        : require("./src/asset/chat-not-focused.png");
+                      break;
+                    }
+                    case "Notification": {
+                      iconName = focused
+                        ? require("./src/asset/notification-focused.png")
+                        : require("./src/asset/notification-not-focused.png");
+                      break;
+                    }
+                    case "Profile": {
+                      iconName = focused
+                        ? require("./src/asset/profile-focused.png")
+                        : require("./src/asset/profile-not-focused.png");
+                      break;
+                    }
+                    case "Proposals": {
+                      iconName = focused
+                        ? require("./src/asset/proposals-focused.png")
+                        : require("./src/asset/proposals-not-focused.png");
+                      break;
+                    }
+                  }
+
+                  // You can return any component that you like here!
+
+                  return (
+                    <View
+                      style={{
+                        borderRadius: 5,
+                        padding: 5,
+                        backgroundColor: focused
+                          ? "#F1F9ED"
+                          : colors.background_color,
+                        width:
+                          (size * Image.resolveAssetSource(iconName).width) /
+                          Image.resolveAssetSource(iconName).height,
+                        height: size,
+                      }}
+                    >
+                      <Image
+                        source={iconName}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                        }}
+                      ></Image>
+                    </View>
+                  );
+                },
+              })}
+              tabBarOptions={{
+                activeTintColor: colors.primary_information_text_color,
+                inactiveTintColor: colors.tab_color,
+                // activeBackgroundColor: "#F1F9ED",
+                // inactiveBackgroundColor: colors.background_color,
+                labelStyle: {
+                  fontFamily: "Montserrat",
+                },
+              }}
+            >
+              <Tab.Screen name="Job" component={PostDetail} />
+              <Tab.Screen name="Chat" component={PostDetail} />
+              <Tab.Screen name="Notification" component={PostDetail} />
+              <Tab.Screen name="Profile" component={Profile} />
+              <Tab.Screen name="Proposals" component={PostDetail} />
+              {/* <Tab.Screen name="Notifications" component={Splash} /> */}
+            </Tab.Navigator>
+          </NavigationContainer>
+          // <View
+          //   style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          // >
+          //   <Button onPress={() => authContext.signOut()}>Sign out</Button>
+          // </View>
         )}
       </PaperProvider>
     </AuthContext.Provider>

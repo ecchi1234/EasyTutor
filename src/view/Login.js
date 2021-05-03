@@ -2,10 +2,10 @@ import React from "react";
 
 import { View, Text } from "react-native";
 
-import Logo from "../../component/Logo";
+import Logo from "../component/Logo";
 import { Button, TextInput } from "react-native-paper";
-import { colors } from "../../asset/color";
-import { AuthContext } from "../../authContext";
+import { colors } from "../asset/color";
+import { AuthContext } from "../authContext";
 
 export default Login = (props) => {
   const [signInInformation, setSignInInformation] = React.useState({
@@ -30,18 +30,19 @@ export default Login = (props) => {
           <TextInput
             label={"Email"}
             value={signInInformation.email}
-            mode={"outlined"}
+            mode={"flat"}
             onChangeText={(text) =>
               setSignInInformation((prevState) => ({
                 ...prevState,
                 email: text,
               }))
             }
+            style={{ marginBottom: 20, marginTop: 20, borderRadius: 5 }}
           ></TextInput>
           <TextInput
             label={"Password"}
             value={signInInformation.password}
-            mode={"outlined"}
+            mode={"flat"}
             onChangeText={(text) =>
               setSignInInformation((prevState) => ({
                 ...prevState,
@@ -49,14 +50,21 @@ export default Login = (props) => {
               }))
             }
             secureTextEntry
+            right={<TextInput.Icon name="eye" color={"#8B8B8B"} />}
           ></TextInput>
+          <Text style={{ color: colors.primary_color, paddingTop: 10 }}>
+            Forgot password ?
+          </Text>
           <Button
             style={{
               marginTop: 20,
               backgroundColor: `${colors.primary_color}`,
+              padding: 10,
+              borderRadius: 7,
             }}
             mode="contained"
             onPress={() => signIn(signInInformation)}
+            labelStyle={{ color: "#fff" }}
           >
             Login
           </Button>
@@ -65,9 +73,12 @@ export default Login = (props) => {
             style={{
               marginTop: 20,
               backgroundColor: `${colors.secondary_color}`,
+              padding: 10,
+              borderRadius: 7,
             }}
             mode="contained"
             labelStyle={{ color: `${colors.primary_color}` }}
+            onPress={() => props.navigation.navigate("Register")}
           >
             Register
           </Button>
