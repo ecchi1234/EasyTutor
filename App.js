@@ -22,6 +22,7 @@ import Splash from "./src/view/SplashView/Splash";
 import PostDetail from "./src/view/PostDetail";
 import Profile from "./src/view/Profile";
 import Register from "./src/view/Register";
+import ListAvailableJob from "./src/view/TutorView/ListAvailableJob";
 import { colors } from "./src/asset/color";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -244,7 +245,7 @@ export default function App() {
               <Tab.Screen name="Chat" component={PostDetail} />
               <Tab.Screen name="Notification" component={PostDetail} />
               <Tab.Screen name="Profile" component={Profile} />
-              <Tab.Screen name="Proposals" component={PostDetail} />
+              <Tab.Screen name="Proposals" component={ListAvailableJob} />
               {/* <Tab.Screen name="Notifications" component={Splash} /> */}
             </Tab.Navigator>
           </NavigationContainer>
