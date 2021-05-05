@@ -48,4 +48,5 @@ This project can be run from a web browser or the Expo client app. You may find 
 https://expo.io/@ecchi123/projects/easytutor
 
 user: dochinh@gmail.com
+
 pass: password
