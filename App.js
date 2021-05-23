@@ -23,8 +23,10 @@ import PostDetail from "./src/view/PostDetail";
 import Profile from "./src/view/Profile";
 import Register from "./src/view/Register";
 import ListAvailableJob from "./src/view/TutorView/ListAvailableJob";
+import PostFilter from "./src/view/TutorView/PostFilter";
+import Chat from "./src/view/Chat/Chat";
+import ListMessage from "./src/view/Chat/ListMessage";
 import { colors } from "./src/asset/color";
-import { Ionicons } from "@expo/vector-icons";
 
 import { AuthContext } from "./src/authContext";
 import fontConfig from "./src/config/font";
@@ -33,6 +35,10 @@ const theme = {
   ...DefaultTheme,
 
   fonts: fontConfig.android,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: colors.primary_color,
+  },
 };
 
 export default function App() {
@@ -142,7 +148,7 @@ export default function App() {
   });
 
   if (!loaded) {
-    return <Text>hello</Text>;
+    return <Splash />;
   }
 
   if (state.isLoading) {
@@ -242,8 +248,8 @@ export default function App() {
               }}
             >
               <Tab.Screen name="Job" component={PostDetail} />
-              <Tab.Screen name="Chat" component={PostDetail} />
-              <Tab.Screen name="Notification" component={PostDetail} />
+              <Tab.Screen name="Chat" component={Chat} />
+              <Tab.Screen name="Notification" component={ListMessage} />
               <Tab.Screen name="Profile" component={Profile} />
               <Tab.Screen name="Proposals" component={ListAvailableJob} />
               {/* <Tab.Screen name="Notifications" component={Splash} /> */}

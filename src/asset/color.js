@@ -10,4 +10,5 @@ export const colors = {
   background_color: "#FAFAFA",
   secondary_information_text_color: "#C4C4C4",
   tab_color: "#D1D1D1",
+  chat_item: "#F1F9ED",
 };

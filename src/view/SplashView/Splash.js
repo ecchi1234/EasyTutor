@@ -1,5 +1,5 @@
 import React from "react";
-import LottieView from "lottie-react-native";
+import Logo from "../../component/Logo";
 import { View, Text } from "react-native";
 
 export default Splash = () => {
@@ -12,8 +12,7 @@ export default Splash = () => {
         alignItems: "center",
       }}
     >
-      {/* <LottieView source={require("../../asset/splash.json")} autoPlay loop /> */}
-      <Text>Test</Text>
+      <Logo />
     </View>
   );
 };
